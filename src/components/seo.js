@@ -1,89 +1,85 @@
-/**
- * SEO component that queries for data with
- *  Gatsby's useStaticQuery React hook
- *
- * See: https://www.gatsbyjs.com/docs/use-static-query/
- */
+import * as React from 'react'
+import PropTypes from 'prop-types'
+import { Helmet } from 'react-helmet'
+import { useLocation } from '@reach/router'
+import { useStaticQuery, graphql} from 'gatsby'
 
-import * as React from "react"
-import PropTypes from "prop-types"
-import { Helmet } from "react-helmet"
-import { useStaticQuery, graphql } from "gatsby"
-
-function Seo({ description, lang, meta, title }) {
-  const { site } = useStaticQuery(
-    graphql`
-      query {
+const query = graphql`
+    query Seo {
         site {
-          siteMetadata {
-            title
-            description
-            author
-          }
+            siteMetadata{
+                title
+                titleTemplate
+                description
+                url
+                image
+                author
+            }
         }
-      }
-    `
-  )
+    }
+`
 
-  const metaDescription = description || site.siteMetadata.description
-  const defaultTitle = site.siteMetadata?.title
+const Seo = ({ title: defaultTitle, description: defaultDescription, ...props }) => {
+    const { pathname } = useLocation()
+    const { site } = useStaticQuery(query)
 
-  return (
-    <Helmet
-      htmlAttributes={{
-        lang,
-      }}
-      title={title}
-      titleTemplate={defaultTitle ? `%s | ${defaultTitle}` : null}
-      meta={[
-        {
-          name: `description`,
-          content: metaDescription,
-        },
-        {
-          property: `og:title`,
-          content: title,
-        },
-        {
-          property: `og:description`,
-          content: metaDescription,
-        },
-        {
-          property: `og:type`,
-          content: `website`,
-        },
-        {
-          name: `twitter:card`,
-          content: `summary`,
-        },
-        {
-          name: `twitter:creator`,
-          content: site.siteMetadata?.author || ``,
-        },
-        {
-          name: `twitter:title`,
-          content: title,
-        },
-        {
-          name: `twitter:description`,
-          content: metaDescription,
-        },
-      ].concat(meta)}
-    />
-  )
-}
 
-Seo.defaultProps = {
-  lang: `en`,
-  meta: [],
-  description: ``,
+    const { 
+        title,
+        titleTemplate,
+        description,
+        url,
+        image,
+        author
+    } = site.siteMetadata
+
+    const seo = {
+        title: defaultTitle || title,
+        description: defaultDescription || description,
+        image: props.image ? props.image : `${url}${image}`,
+        url: `${url}${pathname}`
+    }
+
+    return (
+        <Helmet title={ seo.title } titleTemplate={ titleTemplate }>
+            <meta name="description" content={ seo.description }/>
+            <meta name="image" content={ seo.image }/>
+            <meta name="twitter:card" content="summary_large_image"/>
+
+            { seo.url && <meta property="og:url" content={seo.url}/> }
+
+            { (props.article ? true : null) && <meta property="og:type" content="article"/> }
+
+            { seo.title && <meta property="og:title" content= { seo.title }/> }
+
+            { seo.description && <meta property="og:description" content= { seo.description }/> }
+
+            { seo.image && <meta property="og:image" content= { seo.image }/> }
+
+            { author && <meta name="twitter:creator" content= { author }/> }
+
+            { seo.title && <meta name="twitter:title" content= { seo.title }/> }
+
+            { seo.description && <meta name="twitter:description" content= { seo.description }/> }
+
+            { seo.image && <meta name="twitter:image" content= { seo.image }/> }
+        </Helmet>
+    )
 }
 
 Seo.propTypes = {
-  description: PropTypes.string,
-  lang: PropTypes.string,
-  meta: PropTypes.arrayOf(PropTypes.object),
-  title: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    description: PropTypes.string,
+    image: PropTypes.string,
+    article: PropTypes.bool
+}
+
+Seo.defaultProps = {
+    title: '',
+    description: null,
+    image: null,
+    article: false,
+
 }
 
 export default Seo
