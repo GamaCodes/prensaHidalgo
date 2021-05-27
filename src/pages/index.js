@@ -6,15 +6,16 @@ import Hero from "../components/Hero"
 import News from "../components/News"
 
 const IndexPage = (props) => {
-  console.log(props)
   let heroContent = props && props.data && props.data.featuredPost && props.data.featuredPost.nodes && props.data.featuredPost.nodes[0] && props.data.featuredPost.nodes[0]
   let heroImage = props && props.data && props.data.featuredImage && props.data.featuredImage.nodes && props.data.featuredImage.nodes[0] && props.data.featuredImage.nodes[0]
+  let newsContent = props && props.data && props.data.allGraphCmsPost && props.data.allGraphCmsPost.nodes && props.data.allGraphCmsPost.nodes
+  let newsImage = props && props.data && props.data.allGraphCmsAsset && props.data.allGraphCmsAsset.nodes && props.data.allGraphCmsAsset.nodes
 
   return(
     <Layout>
       <Seo title="Inicio" />
       <Hero content={heroContent} image={heroImage} />
-      <News/>
+      <News content={newsContent} image={newsImage}/>
     </Layout>
   )
 }
@@ -27,7 +28,7 @@ query HomePosts {
       ...PostInfo
     }
   }
-  allGraphCmsPost(skip: 1, limit: 4, sort: {fields: publishedAt, order: DESC}) {
+  allGraphCmsPost(skip: 1, limit: 5, sort: {fields: publishedAt, order: DESC}) {
     nodes {
       ...PostInfo
     }
@@ -40,7 +41,7 @@ query HomePosts {
       ...PostImage
     }
   }
-  allGraphCmsAsset(skip: 1, limit: 4, sort: {fields: publishedAt, order: DESC}) {
+  allGraphCmsAsset(skip: 1, limit: 5, sort: {fields: publishedAt, order: DESC}) {
     nodes {
       ...PostImage
     }

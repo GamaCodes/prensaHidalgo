@@ -7,7 +7,7 @@ import ReactMarkdown from 'react-markdown'
 
 const PostLayout = ({ data: {graphCmsPost: post, cover} }) => {
 
-    console.log(cover, "cover")
+    console.log(post, "post")
 
     const shareImage = post.seo.image ? post.seo.image.url : post.cover.url || null
 
